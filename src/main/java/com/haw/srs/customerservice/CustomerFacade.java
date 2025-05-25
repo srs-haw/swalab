@@ -1,5 +1,6 @@
 package com.haw.srs.customerservice;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -41,13 +42,13 @@ public class CustomerFacade {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Customer createCustomer(@RequestBody Customer customer) {
+    public Customer createCustomer(@Valid @RequestBody Customer customer) {
 
         return customerRepository.save(customer);
     }
 
     @PutMapping
-    public Customer updateCustomer(@RequestBody Customer customer) throws CustomerNotFoundException {
+    public Customer updateCustomer(@Valid @RequestBody Customer customer) throws CustomerNotFoundException {
         Customer customerToUpdate = customerRepository
                 .findById(customer.getId())
                 .orElseThrow(() -> new CustomerNotFoundException(customer.getId()));

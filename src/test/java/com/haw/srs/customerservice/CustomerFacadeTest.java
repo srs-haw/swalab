@@ -125,4 +125,95 @@ class CustomerFacadeTest {
                 statusCode(HttpStatus.NOT_FOUND.value());
         //@formatter:on
     }
+
+    @Test
+    void createCustomerFailBecauseOfInvalidData() {
+        //@formatter:off
+        given().
+                contentType(ContentType.JSON).
+                body("{ 'notexisting': 'notexisting' }").
+        when().
+                post("/customers").
+        then().
+                statusCode(HttpStatus.BAD_REQUEST.value());
+        //@formatter:on
+    }
+
+    @Test
+    void createCustomerFailBecauseOfInvalidData2() {
+        //@formatter:off
+        given().
+                contentType(ContentType.JSON).
+                body("{}").
+        when().
+                post("/customers").
+        then().
+                statusCode(HttpStatus.BAD_REQUEST.value());
+        //@formatter:on
+    }
+
+    @Test
+    void updateCustomerFailBecauseOfNotFound() {
+        Customer nonExistentCustomer = new Customer("John", "Doe", Gender.MALE);
+        nonExistentCustomer.setId(999L);
+
+        //@formatter:off
+        given().
+                contentType(ContentType.JSON).
+                body(nonExistentCustomer).
+        when().
+                put("/customers").
+        then().
+                statusCode(HttpStatus.NOT_FOUND.value());
+        //@formatter:on
+    }
+
+    @Test
+    void deleteCustomerFailBecauseOfNotFound() {
+        //@formatter:off
+        given().
+        when().
+                delete("/customers/{id}", 999L).
+        then().
+                statusCode(HttpStatus.NOT_FOUND.value());
+        //@formatter:on
+    }
+
+    @Test
+    void getAllCustomersWhenEmpty() {
+        customerRepository.deleteAll();
+
+        //@formatter:off
+        given().
+        when().
+                get("/customers").
+        then().
+                statusCode(HttpStatus.OK.value()).
+                body("$", hasSize(0));
+        //@formatter:on
+    }
+
+    @Test
+    void getCustomerFailBecauseOfInvalidPathVariable() {
+        //@formatter:off
+        given().
+        when().
+                get("/customers/{id}", "invalid").
+        then().
+                statusCode(HttpStatus.NOT_FOUND.value());
+        //@formatter:on
+    }
+
+    @Test
+    void updateCustomerFailBecauseOfInvalidData() {
+        //@formatter:off
+        given().
+                contentType(ContentType.JSON).
+                body("{ 'notexisting': 'notexisting' }").
+        when().
+                put("/customers").
+        then().
+                statusCode(HttpStatus.BAD_REQUEST.value());
+        //@formatter:on
+    }
 }
